@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Crop Recommendation System — local app
 
 A Flask app that serves your five trained classifiers behind one page. Enter
@@ -158,3 +159,6 @@ and their output there is guesswork.
 - **Handle the unknown case:** if the top combined score falls below roughly 40%, the
   field probably doesn't resemble anything in the training set. Right now the app still
   gives its best guess — you may want to say "no confident match" instead.
+=======
+# Crop-Recommendation-System
+>>>>>>> 320294559724688c695a9ea28b03ae35c81102b5
