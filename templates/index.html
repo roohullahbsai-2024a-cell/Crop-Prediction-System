@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crop Recommendation System</title>
+<meta name="description" content="Enter your soil and weather readings and see which crop five trained models recommend.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400..700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+</head>
+
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <h1>Crop Recommendation System</h1>
+
+  <h2>Which Crop Should I Select?</h2>
+
+  <p>
+    Put in seven readings from your field — three soil nutrients, the weather, and the
+    soil pH. Five trained models each give their own answer, and together they rank the
+    three best crops for you.
+  </p>
+
+  <div class="facts">
+    <span><b>{{ crop_count }}</b> crops known</span>
+    <span><b>{{ models|length }}</b> models running</span>
+  </div>
+</header>
+
+  <div class="layout">
+
+    <!-- ══════════════════════ INPUT ══════════════════════ -->
+    <form class="panel" id="form" autocomplete="off">
+
+  <div class="crop-selector">
+    <label for="crop-select">Select a crop</label>
+
+    <select id="crop-select">
+      <option value="">Choose a crop...</option>
+
+      {% for crop in crops %}
+        <option value="{{ crop }}">{{ crop|capitalize }}</option>
+      {% endfor %}
+    </select>
+
+    <p>Select a crop to automatically fill its recommended field values.</p>
+  </div>
+
+  <h2>Your field readings</h2>
+  <p class="hint">Drag a slider or type the number. Every value is required.</p>
+
+      {% for f in features %}
+      {% set m = meta[f] %}
+      <div class="field">
+        <div class="field-head">
+          <label for="num-{{ f }}">{{ m.label }}</label>
+          {% if m.unit %}<span class="unit">{{ m.unit }}</span>{% endif %}
+        </div>
+        <div class="field-row">
+          <input type="range"  id="rng-{{ f }}" data-feat="{{ f }}"
+                 min="{{ m.min }}" max="{{ m.max }}" step="{{ m.step }}" value="{{ m.default }}"
+                 aria-label="{{ m.label }} slider">
+          <input type="number" id="num-{{ f }}" data-feat="{{ f }}" name="{{ f }}"
+                 min="{{ m.min }}" max="{{ m.max }}" step="{{ m.step }}" value="{{ m.default }}">
+        </div>
+      </div>
+      {% endfor %}
+
+      <div class="actions">
+        <button type="submit" class="btn btn-main" id="go">
+          <span class="spinner" aria-hidden="true"></span>
+          <span id="go-text">Recommend a crop</span>
+        </button>
+        <button type="button" class="btn btn-ghost" id="reset">Reset</button>
+      </div>
+
+      <div class="error" id="error" role="alert"></div>
+
+      <div class="presets">
+        <p>Or try a ready-made field:</p>
+        <div class="chips">
+          <button type="button" class="chip" data-preset="90,42,43,20.9,82,6.5,202.9">Wet paddy land</button>
+          <button type="button" class="chip" data-preset="40,72,77,17.1,16.9,7.0,88.6">Dry cool plot</button>
+          <button type="button" class="chip" data-preset="20,130,200,22.6,92.5,5.9,112.6">High-potassium soil</button>
+          <button type="button" class="chip" data-preset="100,17,30,26.5,52.1,6.3,60.7">Warm loam</button>
+        </div>
+      </div>
+    </form>
+
+    <!-- ══════════════════════ RESULTS ══════════════════════ -->
+    <section class="results" id="results" aria-live="polite">
+      <div class="empty">
+        <svg class="sprout-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 21v-9"/>
+          <path d="M12 12C12 8 9 5 5 5c0 4 3 7 7 7z"/>
+          <path d="M12 14c0-3.3 2.7-6 6-6 0 3.3-2.7 6-6 6z"/>
+        </svg>
+        <h3>Nothing scored yet</h3>
+        <p>Set your readings on the left and press <strong>Recommend a crop</strong>. You'll see each model's answer and the top three crops.</p>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <span>Five models: XGBoost · Random Forest · SVM · Decision Tree · KNN</span>
+    <span>Trained on 2,200 field records across {{ crop_count }} crops</span>
+  </footer>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

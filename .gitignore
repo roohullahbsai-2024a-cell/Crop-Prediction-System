@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+
+# Large/archive files
+*.zip
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+*.key
+*.pem
