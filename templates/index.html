@@ -4,98 +4,283 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Crop Recommendation System</title>
-<meta name="description" content="Enter your soil and weather readings and see which crop five trained models recommend.">
+<meta name="description" content="Enter your soil and weather readings or pick a crop to see its acceptable range.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
 </head>
 
 <body>
+<!-- Subtle decorative corner botanicals -->
+<div class="botanical-corner botanical-tr" aria-hidden="true">
+  <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M190 10C140 30 110 80 120 140C122 152 127 165 135 175C110 160 85 130 80 90C75 50 100 15 130 5C145 0 170 2 190 10Z" fill="#3e8a5b" fill-opacity="0.08"/>
+    <path d="M195 60C165 85 150 120 160 160C140 140 125 110 130 80C135 50 160 30 185 30C190 40 193 50 195 60Z" fill="#3e8a5b" fill-opacity="0.06"/>
+    <path d="M130 175C115 155 100 120 115 80C95 95 80 120 85 150C88 165 95 180 105 190C115 185 125 180 130 175Z" fill="#3e8a5b" fill-opacity="0.05"/>
+  </svg>
+</div>
+<div class="botanical-corner botanical-bl" aria-hidden="true">
+  <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M10 190C30 140 80 110 140 120C152 122 165 127 175 135C160 110 130 85 90 80C50 75 15 100 5 130C0 145 2 170 10 190Z" fill="#3e8a5b" fill-opacity="0.07"/>
+    <path d="M60 195C85 165 120 150 160 160C140 140 110 125 80 130C50 135 30 160 30 185C40 190 50 193 60 195Z" fill="#3e8a5b" fill-opacity="0.05"/>
+  </svg>
+</div>
+
 <div class="wrap">
 
-<header class="masthead">
-  <h1>Crop Recommendation System</h1>
-
-  <h2>Which Crop Should I Select?</h2>
-
-  <p>
-    Put in seven readings from your field — three soil nutrients, the weather, and the
-    soil pH. Five trained models each give their own answer, and together they rank the
-    three best crops for you.
-  </p>
-
-  <div class="facts">
-    <span><b>{{ crop_count }}</b> crops known</span>
-    <span><b>{{ models|length }}</b> models running</span>
+  <!-- ══════════════════════ BRAND BAR ══════════════════════ -->
+  <div class="top-nav-bar">
+    <div class="brand-left">
+      <span class="brand-logo-badge">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S2 17.52 2 12c0-2.8 1.15-5.33 3-7.14"></path>
+          <path d="M12 6v6l4 2"></path>
+        </svg>
+      </span>
+      <span class="brand-title">Crop Recommendation System</span>
+    </div>
+    <div class="brand-tagline">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 21v-9"></path>
+        <path d="M12 12C12 8 9 5 5 5c0 4 3 7 7 7z"></path>
+        <path d="M12 14c0-3.3 2.7-6 6-6 0 3.3-2.7 6-6 6z"></path>
+      </svg>
+      <span>Smarter Fields, Better Yields</span>
+    </div>
   </div>
-</header>
+
+  <!-- ══════════════════════ MASTHEAD ══════════════════════ -->
+  <header class="masthead">
+    <div class="eyebrow">FIELD INTELLIGENCE</div>
+    <h1>Which <span class="highlight-green">Crop</span> Should I Select?</h1>
+    <p>
+      Enter your field details such as soil nutrients, weather, and pH level.
+      Our AI model will analyze the data and suggest the best crop for your field,
+      so you can get higher yield and better results.
+    </p>
+
+    <div class="meta-pills">
+      <span class="tag-pill">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 21v-9"></path>
+          <path d="M12 12C12 8 9 5 5 5c0 4 3 7 7 7z"></path>
+          <path d="M12 14c0-3.3 2.7-6 6-6 0 3.3-2.7 6-6 6z"></path>
+        </svg>
+        Crop Analysis
+      </span>
+      <span class="tag-pill">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10"></line>
+          <line x1="12" y1="20" x2="12" y2="4"></line>
+          <line x1="6" y1="20" x2="6" y2="14"></line>
+        </svg>
+        Data Driven
+      </span>
+    </div>
+  </header>
 
   <div class="layout">
 
-    <!-- ══════════════════════ INPUT ══════════════════════ -->
-    <form class="panel" id="form" autocomplete="off">
+    <!-- ══════════════════════ LEFT COLUMN ══════════════════════ -->
+    <div class="left-col">
 
-  <div class="crop-selector">
-    <label for="crop-select">Select a crop</label>
-
-    <select id="crop-select">
-      <option value="">Choose a crop...</option>
-
-      {% for crop in crops %}
-        <option value="{{ crop }}">{{ crop|capitalize }}</option>
-      {% endfor %}
-    </select>
-
-    <p>Select a crop to automatically fill its recommended field values.</p>
-  </div>
-
-  <h2>Your field readings</h2>
-  <p class="hint">Drag a slider or type the number. Every value is required.</p>
-
-      {% for f in features %}
-      {% set m = meta[f] %}
-      <div class="field">
-        <div class="field-head">
-          <label for="num-{{ f }}">{{ m.label }}</label>
-          {% if m.unit %}<span class="unit">{{ m.unit }}</span>{% endif %}
+      <!-- BOX 1: Choose a crop -->
+      <section class="card choose-crop-card">
+        <div class="card-head">
+          <div class="card-icon-circle">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 21v-9"></path>
+              <path d="M12 12C12 8 9 5 5 5c0 4 3 7 7 7z"></path>
+              <path d="M12 14c0-3.3 2.7-6 6-6 0 3.3-2.7 6-6 6z"></path>
+            </svg>
+          </div>
+          <h2>Choose a Crop</h2>
         </div>
-        <div class="field-row">
-          <input type="range"  id="rng-{{ f }}" data-feat="{{ f }}"
-                 min="{{ m.min }}" max="{{ m.max }}" step="{{ m.step }}" value="{{ m.default }}"
-                 aria-label="{{ m.label }} slider">
-          <input type="number" id="num-{{ f }}" data-feat="{{ f }}" name="{{ f }}"
-                 min="{{ m.min }}" max="{{ m.max }}" step="{{ m.step }}" value="{{ m.default }}">
+        <div class="crop-select-wrap">
+          <select id="crop-select" aria-label="Choose a crop">
+            {% for c in crop_list %}
+              <option value="{{ c.id }}" {% if c.id == 'blackgram' %}selected{% endif %}>{{ c.name }}</option>
+            {% endfor %}
+          </select>
         </div>
-      </div>
-      {% endfor %}
+        <p class="card-note">Select a crop from the list. No need to worry, we'll handle the rest.</p>
+      </section>
 
-      <div class="actions">
-        <button type="submit" class="btn btn-main" id="go">
-          <span class="spinner" aria-hidden="true"></span>
-          <span id="go-text">Recommend a crop</span>
-        </button>
-        <button type="button" class="btn btn-ghost" id="reset">Reset</button>
-      </div>
-
-      <div class="error" id="error" role="alert"></div>
-
-      <div class="presets">
-        <p>Or try a ready-made field:</p>
-        <div class="chips">
-          <button type="button" class="chip" data-preset="90,42,43,20.9,82,6.5,202.9">Wet paddy land</button>
-          <button type="button" class="chip" data-preset="40,72,77,17.1,16.9,7.0,88.6">Dry cool plot</button>
-          <button type="button" class="chip" data-preset="20,130,200,22.6,92.5,5.9,112.6">High-potassium soil</button>
-          <button type="button" class="chip" data-preset="100,17,30,26.5,52.1,6.3,60.7">Warm loam</button>
+      <!-- BOX 2: Your field readings -->
+      <form class="card readings-card" id="form" autocomplete="off">
+        <div class="card-head">
+          <div class="card-icon-circle">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 12c0 5.52-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2s10 4.48 10 10z"></path>
+              <path d="M12 6v6l4 2"></path>
+            </svg>
+          </div>
+          <h2>Your Field Readings</h2>
         </div>
-      </div>
-    </form>
+        <p class="hint">Enter the values for your field. Each parameter helps in finding the best crop match.</p>
 
-    <!-- ══════════════════════ RESULTS ══════════════════════ -->
-    <section class="results" id="results" aria-live="polite">
+        <!-- Nitrogen -->
+        <div class="field">
+          <div class="field-head">
+            <div class="field-label-group">
+              <span class="field-icon-bullet icon-n">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M12 21v-8"></path><path d="M12 13C12 9 9 6 5 6c0 4 3 7 7 7z"></path>
+                </svg>
+              </span>
+              <label for="num-N">Nitrogen</label>
+            </div>
+            <span class="unit">kg/ha</span>
+          </div>
+          <div class="field-row">
+            <input type="range" id="rng-N" data-feat="N" min="{{ meta['N'].min }}" max="{{ meta['N'].max }}" step="{{ meta['N'].step }}" value="{{ meta['N'].default }}" aria-label="Nitrogen slider">
+            <input type="number" id="num-N" data-feat="N" name="N" min="{{ meta['N'].min }}" max="{{ meta['N'].max }}" step="{{ meta['N'].step }}" value="{{ meta['N'].default }}">
+          </div>
+        </div>
+
+        <!-- Phosphorus -->
+        <div class="field">
+          <div class="field-head">
+            <div class="field-label-group">
+              <span class="field-icon-bullet icon-p">P</span>
+              <label for="num-P">Phosphorus</label>
+            </div>
+            <span class="unit">kg/ha</span>
+          </div>
+          <div class="field-row">
+            <input type="range" id="rng-P" data-feat="P" min="{{ meta['P'].min }}" max="{{ meta['P'].max }}" step="{{ meta['P'].step }}" value="{{ meta['P'].default }}" aria-label="Phosphorus slider">
+            <input type="number" id="num-P" data-feat="P" name="P" min="{{ meta['P'].min }}" max="{{ meta['P'].max }}" step="{{ meta['P'].step }}" value="{{ meta['P'].default }}">
+          </div>
+        </div>
+
+        <!-- Potassium -->
+        <div class="field">
+          <div class="field-head">
+            <div class="field-label-group">
+              <span class="field-icon-bullet icon-k">K</span>
+              <label for="num-K">Potassium</label>
+            </div>
+            <span class="unit">kg/ha</span>
+          </div>
+          <div class="field-row">
+            <input type="range" id="rng-K" data-feat="K" min="{{ meta['K'].min }}" max="{{ meta['K'].max }}" step="{{ meta['K'].step }}" value="{{ meta['K'].default }}" aria-label="Potassium slider">
+            <input type="number" id="num-K" data-feat="K" name="K" min="{{ meta['K'].min }}" max="{{ meta['K'].max }}" step="{{ meta['K'].step }}" value="{{ meta['K'].default }}">
+          </div>
+        </div>
+
+        <!-- Temperature -->
+        <div class="field">
+          <div class="field-head">
+            <div class="field-label-group">
+              <span class="field-icon-bullet icon-temp">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"></path>
+                </svg>
+              </span>
+              <label for="num-temperature">Temperature</label>
+            </div>
+            <span class="unit">°C</span>
+          </div>
+          <div class="field-row">
+            <input type="range" id="rng-temperature" data-feat="temperature" min="{{ meta['temperature'].min }}" max="{{ meta['temperature'].max }}" step="{{ meta['temperature'].step }}" value="{{ meta['temperature'].default }}" aria-label="Temperature slider">
+            <input type="number" id="num-temperature" data-feat="temperature" name="temperature" min="{{ meta['temperature'].min }}" max="{{ meta['temperature'].max }}" step="{{ meta['temperature'].step }}" value="{{ meta['temperature'].default }}">
+          </div>
+        </div>
+
+        <!-- Humidity -->
+        <div class="field">
+          <div class="field-head">
+            <div class="field-label-group">
+              <span class="field-icon-bullet icon-hum">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                </svg>
+              </span>
+              <label for="num-humidity">Humidity</label>
+            </div>
+            <span class="unit">%</span>
+          </div>
+          <div class="field-row">
+            <input type="range" id="rng-humidity" data-feat="humidity" min="{{ meta['humidity'].min }}" max="{{ meta['humidity'].max }}" step="{{ meta['humidity'].step }}" value="{{ meta['humidity'].default }}" aria-label="Humidity slider">
+            <input type="number" id="num-humidity" data-feat="humidity" name="humidity" min="{{ meta['humidity'].min }}" max="{{ meta['humidity'].max }}" step="{{ meta['humidity'].step }}" value="{{ meta['humidity'].default }}">
+          </div>
+        </div>
+
+        <!-- Soil pH -->
+        <div class="field">
+          <div class="field-head">
+            <div class="field-label-group">
+              <span class="field-icon-bullet icon-ph">pH</span>
+              <label for="num-ph">Soil pH</label>
+            </div>
+            <span class="unit"></span>
+          </div>
+          <div class="field-row">
+            <input type="range" id="rng-ph" data-feat="ph" min="{{ meta['ph'].min }}" max="{{ meta['ph'].max }}" step="{{ meta['ph'].step }}" value="{{ meta['ph'].default }}" aria-label="Soil pH slider">
+            <input type="number" id="num-ph" data-feat="ph" name="ph" min="{{ meta['ph'].min }}" max="{{ meta['ph'].max }}" step="{{ meta['ph'].step }}" value="{{ meta['ph'].default }}">
+          </div>
+        </div>
+
+        <!-- Rainfall -->
+        <div class="field">
+          <div class="field-head">
+            <div class="field-label-group">
+              <span class="field-icon-bullet icon-rain">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"></path>
+                  <line x1="8" y1="19" x2="8" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line><line x1="16" y1="19" x2="16" y2="21"></line>
+                </svg>
+              </span>
+              <label for="num-rainfall">Rainfall</label>
+            </div>
+            <span class="unit">mm</span>
+          </div>
+          <div class="field-row">
+            <input type="range" id="rng-rainfall" data-feat="rainfall" min="{{ meta['rainfall'].min }}" max="{{ meta['rainfall'].max }}" step="{{ meta['rainfall'].step }}" value="{{ meta['rainfall'].default }}" aria-label="Rainfall slider">
+            <input type="number" id="num-rainfall" data-feat="rainfall" name="rainfall" min="{{ meta['rainfall'].min }}" max="{{ meta['rainfall'].max }}" step="{{ meta['rainfall'].step }}" value="{{ meta['rainfall'].default }}">
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="btn btn-main" id="go">
+            <span class="btn-icon">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+              </svg>
+            </span>
+            <span id="go-text">Recommend a Crop</span>
+          </button>
+          <button type="button" class="btn btn-ghost" id="reset">
+            <span class="btn-icon">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                <path d="M3 3v5h5"></path>
+              </svg>
+            </span>
+            <span>Reset</span>
+          </button>
+        </div>
+
+        <div class="error" id="error" role="alert"></div>
+
+        <div class="presets">
+          <p>Or try a ready-made field:</p>
+          <div class="chips">
+            <button type="button" class="chip" data-preset="90,42,43,20.9,82,6.5,202.9">Wheat paddy land</button>
+            <button type="button" class="chip" data-preset="40,72,77,17.1,16.9,7.0,88.6">Dry seed plot</button>
+            <button type="button" class="chip" data-preset="20,130,200,22.6,92.5,5.9,112.6">High Potassium soil</button>
+            <button type="button" class="chip" data-preset="100,17,30,26.5,52.1,6.3,60.7">Warm barren</button>
+          </div>
+        </div>
+      </form>
+
+    </div>
+
+    <!-- ══════════════════════ RIGHT COLUMN (RESULTS & STATIC GUIDE) ══════════════════════ -->
+    <section class="results-col" id="results" aria-live="polite">
       <div class="empty">
         <svg class="sprout-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor"
              stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -103,15 +288,14 @@
           <path d="M12 12C12 8 9 5 5 5c0 4 3 7 7 7z"/>
           <path d="M12 14c0-3.3 2.7-6 6-6 0 3.3-2.7 6-6 6z"/>
         </svg>
-        <h3>Nothing scored yet</h3>
-        <p>Set your readings on the left and press <strong>Recommend a crop</strong>. You'll see each model's answer and the top three crops.</p>
+        <h3>Loading crop requirements...</h3>
       </div>
     </section>
 
   </div>
 
   <footer>
-    <span>Five models: XGBoost · Random Forest · SVM · Decision Tree · KNN</span>
+    <span>Three models: XGBoost · Random Forest · SVM</span>
     <span>Trained on 2,200 field records across {{ crop_count }} crops</span>
   </footer>
 

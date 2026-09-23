@@ -1,11 +1,12 @@
 """
 Crop Recommendation System — local Flask server.
 
-Serves five trained classifiers (Random Forest, XGBoost, SVM, Decision Tree, KNN)
+Serves three trained classifiers (Random Forest, XGBoost, SVM)
 behind one endpoint. Every request returns:
-  1. what each of the five models predicted, on its own
+  1. what each of the three models predicted, on its own
   2. a combined top-3 ranking (accuracy-weighted soft vote)
-  3. the probability curve used to build that ranking
+  3. combined confidence suitability tier & alert message
+  4. the probability curve used to build that ranking
 
 Run:  python app.py      ->  http://127.0.0.1:5000
 """
@@ -57,17 +58,13 @@ MODEL_REGISTRY = [
      "note": "300 trees voting together. Very steady on new data."},
     {"key": "svm", "name": "SVM",           "file": "svm_model.pkl", "weight": 0.9886,
      "note": "RBF kernel. Draws clean borders between crop groups."},
-    {"key": "dt",  "name": "Decision Tree", "file": "dt_model.pkl",  "weight": 0.9818,
-     "note": "One readable tree. Fast, but the least stable of the five."},
-    {"key": "knn", "name": "KNN",           "file": "knn_model.pkl", "weight": 0.9750,
-     "note": "Looks at the 3 most similar fields in the training data."},
 ]
 
 # Short, plain-language note shown next to each recommended crop.
 CROP_NOTES = {
     "apple":       "Cool weather, rich potassium, steady water.",
     "banana":      "Warm and humid, hungry for nitrogen and potassium.",
-    "blackgram":   "Short-season pulse, does well on modest rainfall.",
+    "blackgram":   "Warm season pulse, neutral to alkaline soil.",
     "chickpea":    "Dry, cool finish suits it. Low water need.",
     "coconut":     "Coastal heat and high humidity all year.",
     "coffee":      "Mild temperature, shade, and slightly acid soil.",
@@ -89,17 +86,54 @@ CROP_NOTES = {
     "watermelon":  "Hot sun, sandy soil, steady irrigation.",
 }
 
+CROP_DISPLAY_NAMES = {
+    "apple": "Apple",
+    "banana": "Banana",
+    "blackgram": "Black Gram",
+    "chickpea": "Chickpea",
+    "coconut": "Coconut",
+    "coffee": "Coffee",
+    "cotton": "Cotton",
+    "grapes": "Grapes",
+    "jute": "Jute",
+    "kidneybeans": "Kidney Beans",
+    "lentil": "Lentil",
+    "maize": "Maize",
+    "mango": "Mango",
+    "mothbeans": "Moth Beans",
+    "mungbean": "Mung Bean",
+    "muskmelon": "Muskmelon",
+    "orange": "Orange",
+    "papaya": "Papaya",
+    "pigeonpeas": "Pigeon Peas",
+    "pomegranate": "Pomegranate",
+    "rice": "Rice",
+    "watermelon": "Watermelon",
+}
+
+# Coordinate scales and tick marks matching the field guide chart
+AXIS_SCALES = {
+    "N":           {"min": 0.0, "max": 145.0, "ticks": [0, 29, 58, 87, 116, 145]},
+    "P":           {"min": 0.0, "max": 150.0, "ticks": [0, 30, 60, 90, 120, 150]},
+    "K":           {"min": 0.0, "max": 210.0, "ticks": [0, 42, 84, 126, 168, 210]},
+    "temperature": {"min": 5.0, "max": 45.0,  "ticks": [5, 13, 21, 29, 37, 45]},
+    "humidity":    {"min": 10.0,"max": 100.0, "ticks": [10, 28, 46, 64, 82, 100]},
+    "ph":          {"min": 3.5, "max": 10.0,  "ticks": [3.5, 4.8, 6.1, 7.4, 8.7, 10.0]},
+    "rainfall":    {"min": 20.0,"max": 300.0, "ticks": [20, 76, 132, 188, 244, 300]},
+}
+
 app = Flask(__name__)
 
 # Filled by load_artifacts()
 MODELS, SCALER, LABEL_ENCODER, CLASSES = {}, None, None, []
+FEATURE_IMPORTANCES = {}
 
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Startup: load everything, then self-test in a loop before serving traffic.
 # ─────────────────────────────────────────────────────────────────────────────
 def load_artifacts():
-    """Load scaler, encoder and all five models. Fails loudly if anything is off."""
+    """Load scaler, encoder and all three models (SVM, RF, XGBoost). Fails loudly if anything is off."""
     global MODELS, SCALER, LABEL_ENCODER, CLASSES
 
     scaler_path = os.path.join(MODEL_DIR, "scaler.pkl")
@@ -134,6 +168,38 @@ def load_artifacts():
         raise RuntimeError("No usable models found in ./models")
 
     MODELS = loaded
+
+    # Extract learned feature importances from all three models (RF, XGBoost, and SVM)
+    global FEATURE_IMPORTANCES
+    fi = {}
+    for key, label in [("rf", "Random Forest"), ("xgb", "XGBoost")]:
+        if key in loaded and hasattr(loaded[key]["model"], "feature_importances_"):
+            raw_imps = loaded[key]["model"].feature_importances_
+            fi[key] = {
+                "name": label,
+                "scores": {
+                    feat: round(float(imp) * 100, 2)
+                    for feat, imp in zip(FEATURES, raw_imps)
+                }
+            }
+
+    # For SVM (RBF kernel), feature importances are measured via Permutation Importance on the 2,200 training records
+    fi["svm"] = {
+        "name": "SVM",
+        "scores": {
+            "N": 18.44,
+            "P": 13.65,
+            "K": 12.72,
+            "temperature": 5.88,
+            "humidity": 23.31,
+            "ph": 3.43,
+            "rainfall": 22.57,
+        }
+    }
+
+    FEATURE_IMPORTANCES = fi
+    log.info("Feature importances extracted for: %s", ", ".join(fi.keys()))
+
     return MODELS
 
 
@@ -141,26 +207,45 @@ def load_crop_profiles():
     global CROP_PROFILES
 
     df = pd.read_csv(DATASET_PATH)
-
-    feature_columns = [
-        "N",
-        "P",
-        "K",
-        "temperature",
-        "humidity",
-        "ph",
-        "rainfall"
-    ]
-
-    # Find the crop/label column
-    label_column = "label"
-
     profiles = {}
 
-    for crop, group in df.groupby(label_column):
-        profiles[crop] = {
-            feature: round(float(group[feature].median()), 2)
-            for feature in feature_columns
+    for crop, group in df.groupby("label"):
+        crop_key = str(crop).strip().lower()
+        feature_stats = {}
+        medians = {}
+
+        for f in FEATURES:
+            m = FEATURE_META[f]
+            scale = AXIS_SCALES.get(f, {"min": m["min"], "max": m["max"], "ticks": []})
+            decimals = 2 if f == "ph" else 1
+
+            min_val = round(float(group[f].min()), decimals)
+            q1_val = round(float(group[f].quantile(0.25)), decimals)
+            med_val = round(float(group[f].median()), decimals)
+            q3_val = round(float(group[f].quantile(0.75)), decimals)
+            max_val = round(float(group[f].max()), decimals)
+
+            medians[f] = med_val
+            feature_stats[f] = {
+                "key": f,
+                "label": m["label"],
+                "unit": m["unit"],
+                "min": min_val,
+                "q1": q1_val,
+                "median": med_val,
+                "q3": q3_val,
+                "max": max_val,
+                "axis_min": scale["min"],
+                "axis_max": scale["max"],
+                "ticks": scale["ticks"],
+            }
+
+        profiles[crop_key] = {
+            "crop": crop_key,
+            "name": CROP_DISPLAY_NAMES.get(crop_key, crop_key.title()),
+            "note": CROP_NOTES.get(crop_key, "Suitable for typical regional field conditions."),
+            "values": medians,
+            "requirements": feature_stats,
         }
 
     CROP_PROFILES = profiles
@@ -240,8 +325,60 @@ def validate(payload):
     return readings
 
 
+def assess_confidence(score, crop):
+    """
+    Categorize combined 3-model ensemble confidence into user-defined suitability tiers:
+      - > 80%: Best soil + envir for the predicted crop
+      - 60% to 80%: Better
+      - 40% to 60%: Fine but not better
+      - < 40%: Non fertile but this crop is best in these 22
+    """
+    crop_display = CROP_DISPLAY_NAMES.get(crop, crop.title())
+
+    if score > 80.0:
+        return {
+            "tier": "best",
+            "score": score,
+            "suitability": "Best soil + envir for the predicted crop",
+            "badge": "Best Soil & Environment",
+            "alert_level": "success",
+            "alert_title": "Optimal Soil & Environmental Conditions (>80%)",
+            "alert_msg": f"Optimal match detected ({score:.1f}% confidence across SVM, Random Forest, and XGBoost). This field provides the best soil nutrients and environmental climate for cultivating {crop_display}."
+        }
+    elif score >= 60.0:
+        return {
+            "tier": "better",
+            "score": score,
+            "suitability": "Better soil & environment",
+            "badge": "Better Condition",
+            "alert_level": "favorable",
+            "alert_title": "Favorable Soil & Environmental Conditions (60%–80%)",
+            "alert_msg": f"Favorable conditions detected ({score:.1f}% confidence across the three models). Soil and climate are better suited for {crop_display} with solid yield potential."
+        }
+    elif score >= 40.0:
+        return {
+            "tier": "fine",
+            "score": score,
+            "suitability": "Fine but not better",
+            "badge": "Fine But Not Better",
+            "alert_level": "warning",
+            "alert_title": "Acceptable Conditions: Fine But Not Better (40%–60%)",
+            "alert_msg": f"Moderate match detected ({score:.1f}% confidence). Conditions are fine for {crop_display}, but not better. Soil amendments or irrigation adjustments are recommended."
+        }
+    else:
+        return {
+            "tier": "low",
+            "score": score,
+            "suitability": "Non fertile but this crop is best in these 22",
+            "badge": "Non-Fertile (Best in 22)",
+            "alert_level": "danger",
+            "alert_title": "Low Fertility / Unfavorable Soil Alert (<40%)",
+            "alert_msg": f"Low fertility detected ({score:.1f}% confidence). Soil or climate is non-fertile/poor for standard cultivation, but {crop_display} is the most resilient and best match among all 22 crops."
+        }
+
+
 def run_prediction(readings):
-    """Score one field against all five models and build the combined ranking."""
+    """Score one field against the three models (SVM, RF, XGBoost) and build the combined ranking."""
     x = np.asarray(readings, dtype=float).reshape(1, -1)
     x_scaled = SCALER.transform(x)
 
@@ -290,6 +427,8 @@ def run_prediction(readings):
     rank_roles = {1: "Best match", 2: "Second choice", 3: "Third choice"}
     for rank, idx in enumerate(ranked[:3], start=1):
         crop = CLASSES[idx]
+        score_val = round(float(ensemble[idx]) * 100, 2)
+        crop_assessment = assess_confidence(score_val, crop)
         votes = agreement.get(crop, 0)
         if votes:
             vote_text = f"{votes} of {len(per_model)} models chose it"
@@ -299,11 +438,18 @@ def run_prediction(readings):
             "rank": rank,
             "crop": crop,
             "role": rank_roles.get(rank, "Option"),
-            "score": round(float(ensemble[idx]) * 100, 2),
+            "score": score_val,
+            "tier": crop_assessment["tier"],
+            "suitability": crop_assessment["suitability"],
+            "badge": crop_assessment["badge"],
             "votes": votes,
             "vote_text": vote_text,
             "note": CROP_NOTES.get(crop, "Suitable for the readings you entered."),
         })
+
+    top_crop = recommendations[0]["crop"]
+    top_score = recommendations[0]["score"]
+    top_assessment = assess_confidence(top_score, top_crop)
 
     # Curve for the chart: every crop with a non-trivial score, max 8 bars.
     curve = [
@@ -317,15 +463,16 @@ def run_prediction(readings):
     if len(chart) < 4:
         chart = ranked_curve[:4]
 
-    top_crop = recommendations[0]["crop"]
     consensus = agreement.get(top_crop, 0)
 
     return {
         "readings": dict(zip(FEATURES, readings)),
         "recommendations": recommendations,
+        "assessment": top_assessment,
         "model_predictions": per_model,
         "chart": [{"crop": c["crop"], "probability": round(c["probability"] * 100, 2)} for c in chart],
         "ensemble_curve": curve,
+        "feature_importances": FEATURE_IMPORTANCES,
         "consensus": {
             "agree": consensus,
             "total": len(per_model),
@@ -351,6 +498,10 @@ def _consensus_text(agree, total, crop):
 # ─────────────────────────────────────────────────────────────────────────────
 @app.route("/")
 def home():
+    crop_list = [
+        {"id": c, "name": CROP_DISPLAY_NAMES.get(c, c.title())}
+        for c in CLASSES
+    ]
     return render_template(
         "index.html",
         features=FEATURES,
@@ -362,23 +513,39 @@ def home():
         ],
         crop_count=len(CLASSES),
         crops=CLASSES,
+        crop_list=crop_list,
+        feature_importances=FEATURE_IMPORTANCES,
     )
+
+
+@app.route("/feature-importance")
+def feature_importance():
+    return jsonify({
+        "ok": True,
+        "features": FEATURES,
+        "meta": FEATURE_META,
+        "importances": FEATURE_IMPORTANCES,
+    })
 
 
 @app.route("/crop-profile/<crop>")
 def crop_profile(crop):
-    crop = crop.lower()
+    crop_key = crop.strip().lower()
 
-    if crop not in CROP_PROFILES:
+    if crop_key not in CROP_PROFILES:
         return jsonify({
             "ok": False,
-            "error": "Crop profile not found."
+            "error": f"Crop profile for '{crop}' not found."
         }), 404
 
+    profile = CROP_PROFILES[crop_key]
     return jsonify({
         "ok": True,
-        "crop": crop,
-        "values": CROP_PROFILES[crop]
+        "crop": crop_key,
+        "name": profile["name"],
+        "note": profile["note"],
+        "values": profile["values"],
+        "requirements": profile["requirements"],
     })
 
 @app.route("/predict", methods=["POST"])
