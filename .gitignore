@@ -1,25 +1,130 @@
-# Python
+# ==============================================================================
+# Git Ignore Configuration
+# Project: Crop Recommendation System (Machine Learning & Flask Web App)
+# ==============================================================================
+
+# --------------------------------------------------
+# Python Bytecode & Cache
+# --------------------------------------------------
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# --------------------------------------------------
+# Virtual Environments & Package Managers
+# --------------------------------------------------
 .venv/
 venv/
+ENV/
 env/
+env.bak/
+venv.bak/
+.conda/
 
-# Jupyter
+# --------------------------------------------------
+# Jupyter Notebooks & Data Science Checkpoints
+# --------------------------------------------------
 .ipynb_checkpoints/
+*-checkpoint.ipynb
+.jupyter/
 
-# IDE
-.vscode/
-.idea/
-
-# Large/archive files
-*.zip
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Secrets
+# --------------------------------------------------
+# Environment Variables, Credentials & Secrets
+# --------------------------------------------------
 .env
+.env.*
+!.env.example
 *.key
 *.pem
+*.cert
+*.crt
+
+# --------------------------------------------------
+# IDEs, Editors & Tooling
+# --------------------------------------------------
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+
+# --------------------------------------------------
+# Operating System Artifacts (Windows, macOS, Linux)
+# --------------------------------------------------
+# Windows
+Thumbs.db
+ehthumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# --------------------------------------------------
+# Testing, Coverage & Profiling
+# --------------------------------------------------
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+nosetests.xml
+coverage.xml
+
+# --------------------------------------------------
+# Distribution, Builds & Packaging
+# --------------------------------------------------
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# --------------------------------------------------
+# Logs & Runtime Outputs
+# --------------------------------------------------
+*.log
+logs/
+*.pid
+
+# --------------------------------------------------
+# Archives & Temporary Files
+# --------------------------------------------------
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+*.tmp
+*.temp
+*.bak
+
+# --------------------------------------------------
+# Agent & Local Workspace Scratches
+# --------------------------------------------------
+scratch/
+.agents/
