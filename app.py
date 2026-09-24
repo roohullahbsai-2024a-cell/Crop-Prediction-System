@@ -344,7 +344,7 @@ def assess_confidence(score, crop):
             "suitability": "Best soil + envir for the predicted crop",
             "badge": "Best Soil & Environment",
             "alert_level": "success",
-            "alert_title": "Optimal Soil & Environmental Conditions (>80%)",
+            "alert_title": "Optimal Soil & Environmental Conditions",
             "alert_msg": f"Optimal match detected ({score:.1f}% confidence across SVM, Random Forest, and XGBoost). This field provides the best soil nutrients and environmental climate for cultivating {crop_display}."
         }
     elif score >= 60.0:
@@ -354,7 +354,7 @@ def assess_confidence(score, crop):
             "suitability": "Better soil & environment",
             "badge": "Better Condition",
             "alert_level": "favorable",
-            "alert_title": "Favorable Soil & Environmental Conditions (60%–80%)",
+            "alert_title": "Favorable Soil & Environmental Conditions",
             "alert_msg": f"Favorable conditions detected ({score:.1f}% confidence across the three models). Soil and climate are better suited for {crop_display} with solid yield potential."
         }
     elif score >= 40.0:
@@ -364,7 +364,7 @@ def assess_confidence(score, crop):
             "suitability": "Fine but not better",
             "badge": "Fine But Not Better",
             "alert_level": "warning",
-            "alert_title": "Acceptable Conditions: Fine But Not Better (40%–60%)",
+            "alert_title": "Acceptable Conditions: Fine But Not Better",
             "alert_msg": f"Moderate match detected ({score:.1f}% confidence). Conditions are fine for {crop_display}, but not better. Soil amendments or irrigation adjustments are recommended."
         }
     else:
@@ -374,7 +374,7 @@ def assess_confidence(score, crop):
             "suitability": "Non fertile but this crop is best in these 22",
             "badge": "Non-Fertile (Best in 22)",
             "alert_level": "danger",
-            "alert_title": "Low Fertility / Unfavorable Soil Alert (<40%)",
+            "alert_title": "Low Fertility / Unfavorable Soil Alert",
             "alert_msg": f"Low fertility detected ({score:.1f}% confidence). Soil or climate is non-fertile/poor for standard cultivation, but {crop_display} is the most resilient and best match among all 22 crops."
         }
 
