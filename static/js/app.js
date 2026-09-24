@@ -287,19 +287,32 @@
     rainfall: '<span class="field-icon-bullet icon-rain"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"></path><line x1="8" y1="19" x2="8" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line><line x1="16" y1="19" x2="16" y2="21"></line></svg></span>'
   };
 
+  /* Per-feature color palettes for the box plot */
+  const FEAT_COLORS = {
+    N:           { box: '#16a34a', boxFill: '#bbf7d0', boxFill2: '#4ade80', whisker: '#15803d', median: '#ffffff', medianStroke: '#14532d' },
+    P:           { box: '#2563eb', boxFill: '#bfdbfe', boxFill2: '#60a5fa', whisker: '#1d4ed8', median: '#ffffff', medianStroke: '#1e3a8a' },
+    K:           { box: '#7c3aed', boxFill: '#ddd6fe', boxFill2: '#a78bfa', whisker: '#6d28d9', median: '#ffffff', medianStroke: '#4c1d95' },
+    temperature: { box: '#ea580c', boxFill: '#fed7aa', boxFill2: '#fb923c', whisker: '#c2410c', median: '#ffffff', medianStroke: '#7c2d12' },
+    humidity:    { box: '#0891b2', boxFill: '#a5f3fc', boxFill2: '#22d3ee', whisker: '#0e7490', median: '#ffffff', medianStroke: '#164e63' },
+    ph:          { box: '#d97706', boxFill: '#fde68a', boxFill2: '#fbbf24', whisker: '#b45309', median: '#ffffff', medianStroke: '#78350f' },
+    rainfall:    { box: '#0284c7', boxFill: '#bae6fd', boxFill2: '#38bdf8', whisker: '#075985', median: '#ffffff', medianStroke: '#0c4a6e' }
+  };
+
   /* ---------------------------------------------------- Boxplot SVG Builder */
 
-  function buildBoxPlotSvg(req) {
+  function buildBoxPlotSvg(req, featKey) {
     const padL = 34;
     const padR = 566;
-    const plotW = padR - padL; // 532
+    const plotW = padR - padL;
     const axisMin = req.axis_min;
     const axisMax = req.axis_max;
     const span = (axisMax - axisMin) || 1;
+    const c = FEAT_COLORS[featKey] || { box: '#16a34a', boxFill: '#bbf7d0', boxFill2: '#4ade80', whisker: '#15803d', median: '#ffffff', medianStroke: '#14532d' };
+    const gradId = 'bp-grad-' + (featKey || 'def');
 
     function toX(v) {
-      const c = Math.max(axisMin, Math.min(axisMax, v));
-      return padL + ((c - axisMin) / span) * plotW;
+      const clamped = Math.max(axisMin, Math.min(axisMax, v));
+      return padL + ((clamped - axisMin) / span) * plotW;
     }
 
     const minX = toX(req.min);
@@ -307,31 +320,39 @@
     const medX = toX(req.median);
     const q3X  = toX(req.q3);
     const maxX = toX(req.max);
+    const boxW = Math.max(6, q3X - q1X);
 
-    const boxW = Math.max(4, q3X - q1X);
-
-    // Build axis ticks and tick numbers
-    let ticksSvg = "";
+    // Axis ticks
+    let ticksSvg = '';
     (req.ticks || []).forEach(function (t) {
       const tx = toX(t);
-      ticksSvg += '<line x1="' + tx.toFixed(1) + '" y1="15" x2="' + tx.toFixed(1) + '" y2="24" stroke="#1a2e1e" stroke-width="1.8"/>';
-      ticksSvg += '<text x="' + tx.toFixed(1) + '" y="35" font-size="12" fill="#1a2e1e" text-anchor="middle" font-family="var(--sans)" font-weight="700" letter-spacing="-0.2">' + t + '</text>';
+      ticksSvg += '<line x1="' + tx.toFixed(1) + '" y1="26" x2="' + tx.toFixed(1) + '" y2="36" stroke="#1a2e1e" stroke-width="1.8"/>';
+      ticksSvg += '<text x="' + tx.toFixed(1) + '" y="50" font-size="12" fill="#1a2e1e" text-anchor="middle" font-family="var(--sans)" font-weight="700" letter-spacing="-0.2">' + t + '</text>';
     });
 
     return '' +
-      '<svg class="guide-chart-svg" viewBox="0 0 600 42" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Range chart">' +
+      '<svg class="guide-chart-svg" viewBox="0 0 600 58" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Range chart">' +
+      '  <defs>' +
+      '    <linearGradient id="' + gradId + '" x1="0" y1="0" x2="0" y2="1">' +
+      '      <stop offset="0%" stop-color="' + c.boxFill2 + '" stop-opacity="0.95"/>' +
+      '      <stop offset="100%" stop-color="' + c.boxFill + '" stop-opacity="0.85"/>' +
+      '    </linearGradient>' +
+      '  </defs>' +
       '  <!-- Baseline axis -->' +
-      '  <line x1="' + padL + '" y1="18" x2="' + padR + '" y2="18" stroke="#1a2e1e" stroke-width="2.2"/>' +
+      '  <line x1="' + padL + '" y1="26" x2="' + padR + '" y2="26" stroke="#1a2e1e" stroke-width="2.2"/>' +
       '  <!-- Ticks -->' +
       ticksSvg +
-      '  <!-- Workable range whiskers -->' +
-      '  <line x1="' + minX.toFixed(1) + '" y1="18" x2="' + maxX.toFixed(1) + '" y2="18" stroke="#16261c" stroke-width="2.4" stroke-linecap="round"/>' +
-      '  <line x1="' + minX.toFixed(1) + '" y1="10" x2="' + minX.toFixed(1) + '" y2="26" stroke="#16261c" stroke-width="2.4"/>' +
-      '  <line x1="' + maxX.toFixed(1) + '" y1="10" x2="' + maxX.toFixed(1) + '" y2="26" stroke="#16261c" stroke-width="2.4"/>' +
-      '  <!-- Most suitable range box (Q1 to Q3) -->' +
-      '  <rect x="' + q1X.toFixed(1) + '" y="7" width="' + boxW.toFixed(1) + '" height="22" rx="2.5" fill="#c0ea79" stroke="#16261c" stroke-width="1.8"/>' +
-      '  <!-- Typical value line (Median) -->' +
-      '  <line x1="' + medX.toFixed(1) + '" y1="7" x2="' + medX.toFixed(1) + '" y2="29" stroke="#16261c" stroke-width="2.4"/>' +
+      '  <!-- Workable range whisker line -->' +
+      '  <line x1="' + minX.toFixed(1) + '" y1="26" x2="' + maxX.toFixed(1) + '" y2="26" stroke="' + c.whisker + '" stroke-width="3" stroke-linecap="round"/>' +
+      '  <!-- Min cap -->' +
+      '  <line x1="' + minX.toFixed(1) + '" y1="14" x2="' + minX.toFixed(1) + '" y2="38" stroke="' + c.whisker + '" stroke-width="3" stroke-linecap="round"/>' +
+      '  <!-- Max cap -->' +
+      '  <line x1="' + maxX.toFixed(1) + '" y1="14" x2="' + maxX.toFixed(1) + '" y2="38" stroke="' + c.whisker + '" stroke-width="3" stroke-linecap="round"/>' +
+      '  <!-- IQR box with gradient fill -->' +
+      '  <rect x="' + q1X.toFixed(1) + '" y="8" width="' + boxW.toFixed(1) + '" height="36" rx="5" fill="url(#' + gradId + ')" stroke="' + c.box + '" stroke-width="2.2"/>' +
+      '  <!-- Median line -->' +
+      '  <line x1="' + medX.toFixed(1) + '" y1="8" x2="' + medX.toFixed(1) + '" y2="44" stroke="' + c.medianStroke + '" stroke-width="4" stroke-linecap="round"/>' +
+      '  <line x1="' + medX.toFixed(1) + '" y1="8" x2="' + medX.toFixed(1) + '" y2="44" stroke="' + c.median + '" stroke-width="2" stroke-linecap="round" opacity="0.85"/>' +
       '</svg>';
   }
 
@@ -362,7 +383,7 @@
         '    </div>' +
         '  </div>' +
         '  <div class="guide-chart-box">' +
-        buildBoxPlotSvg(req) +
+        buildBoxPlotSvg(req, f) +
         '  </div>' +
         '</div>';
     });
