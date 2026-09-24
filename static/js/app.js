@@ -201,7 +201,7 @@
   function setBusy(on) {
     goBtn.disabled = on;
     goBtn.classList.toggle("is-busy", on);
-    goText.textContent = on ? "Scoring your field" : "Recommend a crop";
+    goText.textContent = on ? "Scoring your field" : "Recommend a Crop";
   }
 
   /* -------------------------------------------------------------- renders */

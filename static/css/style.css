@@ -510,6 +510,8 @@ input[type="number"]:focus {
   background: var(--forest);
   color: #ffffff;
   box-shadow: 0 4px 14px rgba(14, 68, 40, 0.22);
+  white-space: nowrap;
+  text-align: center;
 }
 
 .btn-main:hover {
