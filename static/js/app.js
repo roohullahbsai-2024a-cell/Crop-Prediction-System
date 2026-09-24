@@ -775,6 +775,8 @@
     const phVal = readings.ph !== undefined ? readings.ph : "recorded level";
     const npkVal = "N: " + (readings.N || 0) + ", P: " + (readings.P || 0) + ", K: " + (readings.K || 0) + " kg/ha";
 
+    const consensusText = (c.text || "").replace(/\.+$/, "");
+
     return '' +
       '<div class="section-title reveal" style="--d:650ms">' +
       '  <div class="title-left">' +
@@ -825,8 +827,8 @@
       '    </div>' +
       '  </div>' +
       '  <div class="best-verdict-box">' +
-      '    <span class="verdict-chip">AI Verdict</span>' +
-      '    <p><b>Model Consensus:</b> ' + esc(c.text) + '. ' + esc(displayName) + ' achieved the highest accuracy-weighted score of <b>' + top.score.toFixed(1) + '%</b> among all 22 evaluated crops.</p>' +
+      '    <span class="verdict-chip">AI Prediction</span>' +
+      '    <p><b>Model Consensus:</b> ' + esc(consensusText) + '. ' + esc(displayName) + ' achieved the highest accuracy-weighted score of <b>' + top.score.toFixed(1) + '%</b> among all 22 evaluated crops.</p>' +
       '  </div>' +
       '</div>';
   }
