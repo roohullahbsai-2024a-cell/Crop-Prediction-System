@@ -427,7 +427,6 @@
       '      <span class="alert-icon-circle" aria-hidden="true">' + iconSvg + '</span>' +
       '      <div class="alert-header-info">' +
       '        <h4 class="alert-heading">' + esc(assessment.alert_title) + '</h4>' +
-      '        <div class="alert-status-pill">' + esc(assessment.suitability.toUpperCase()) + '</div>' +
       '      </div>' +
       '    </div>' +
       '    <div class="alert-score-badge">' +
@@ -581,7 +580,6 @@
       '      <span class="alert-icon-circle" aria-hidden="true">' + iconSvg + '</span>' +
       '      <div class="alert-header-info">' +
       '        <h4 class="alert-heading">' + esc(assessment.alert_title) + '</h4>' +
-      '        <div class="alert-status-pill">' + esc(assessment.suitability.toUpperCase()) + '</div>' +
       '      </div>' +
       '    </div>' +
       '    <div class="alert-score-badge">' +
