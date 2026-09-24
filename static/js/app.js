@@ -797,28 +797,28 @@
       '  <div class="best-factors-grid">' +
       '    <div class="best-factor-box">' +
       '      <div class="factor-header">' +
-      '        <span class="factor-icon-pill rain-pill">🌧️ Moisture & Water</span>' +
+      '        <span class="factor-icon-pill rain-pill">Moisture & Water</span>' +
       '        <span class="factor-val">' + esc(rainVal) + ' / ' + esc(humVal) + '</span>' +
       '      </div>' +
       '      <p class="factor-desc">' + esc(reasonInfo.moisture) + '</p>' +
       '    </div>' +
       '    <div class="best-factor-box">' +
       '      <div class="factor-header">' +
-      '        <span class="factor-icon-pill npk-pill">🌱 Soil Nutrients (NPK)</span>' +
+      '        <span class="factor-icon-pill npk-pill">Soil Nutrients (NPK)</span>' +
       '        <span class="factor-val">' + esc(npkVal) + '</span>' +
       '      </div>' +
       '      <p class="factor-desc">' + esc(reasonInfo.npk) + '</p>' +
       '    </div>' +
       '    <div class="best-factor-box">' +
       '      <div class="factor-header">' +
-      '        <span class="factor-icon-pill temp-pill">🌡️ Temperature Climate</span>' +
+      '        <span class="factor-icon-pill temp-pill">Temperature Climate</span>' +
       '        <span class="factor-val">' + esc(tempVal) + '</span>' +
       '      </div>' +
       '      <p class="factor-desc">' + esc(reasonInfo.climate) + '</p>' +
       '    </div>' +
       '    <div class="best-factor-box">' +
       '      <div class="factor-header">' +
-      '        <span class="factor-icon-pill ph-pill">⚖️ Soil Reaction (pH)</span>' +
+      '        <span class="factor-icon-pill ph-pill">Soil Reaction (pH)</span>' +
       '        <span class="factor-val">pH ' + esc(phVal) + '</span>' +
       '      </div>' +
       '      <p class="factor-desc">' + esc(reasonInfo.ph) + '</p>' +
