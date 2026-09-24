@@ -429,10 +429,6 @@
       '        <h4 class="alert-heading">' + esc(assessment.alert_title) + '</h4>' +
       '      </div>' +
       '    </div>' +
-      '    <div class="alert-score-badge">' +
-      '      <b>' + assessment.score.toFixed(1) + '%</b>' +
-      '      <small>Confidence (Good Fit)</small>' +
-      '    </div>' +
       '  </div>' +
       '  <p class="alert-msg-body">' + esc(assessment.alert_msg) + '</p>' +
       '</div>';
@@ -581,10 +577,6 @@
       '      <div class="alert-header-info">' +
       '        <h4 class="alert-heading">' + esc(assessment.alert_title) + '</h4>' +
       '      </div>' +
-      '    </div>' +
-      '    <div class="alert-score-badge">' +
-      '      <b>' + assessment.score.toFixed(1) + '%</b>' +
-      '      <small>Confidence Score</small>' +
       '    </div>' +
       '  </div>' +
       '  <p class="alert-msg-body">' + esc(assessment.alert_msg) + '</p>' +
