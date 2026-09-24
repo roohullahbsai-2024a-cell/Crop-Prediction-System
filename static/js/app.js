@@ -326,12 +326,12 @@
     let ticksSvg = '';
     (req.ticks || []).forEach(function (t) {
       const tx = toX(t);
-      ticksSvg += '<line x1="' + tx.toFixed(1) + '" y1="26" x2="' + tx.toFixed(1) + '" y2="36" stroke="#1a2e1e" stroke-width="1.8"/>';
-      ticksSvg += '<text x="' + tx.toFixed(1) + '" y="50" font-size="12" fill="#1a2e1e" text-anchor="middle" font-family="var(--sans)" font-weight="700" letter-spacing="-0.2">' + t + '</text>';
+      ticksSvg += '<line x1="' + tx.toFixed(1) + '" y1="18" x2="' + tx.toFixed(1) + '" y2="24" stroke="#1a2e1e" stroke-width="1.6"/>';
+      ticksSvg += '<text x="' + tx.toFixed(1) + '" y="36" font-size="11.5" fill="#1a2e1e" text-anchor="middle" font-family="var(--sans)" font-weight="700" letter-spacing="-0.2">' + t + '</text>';
     });
 
     return '' +
-      '<svg class="guide-chart-svg" viewBox="0 0 600 58" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Range chart">' +
+      '<svg class="guide-chart-svg" viewBox="0 0 600 44" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Range chart">' +
       '  <defs>' +
       '    <linearGradient id="' + gradId + '" x1="0" y1="0" x2="0" y2="1">' +
       '      <stop offset="0%" stop-color="' + c.boxFill2 + '" stop-opacity="0.95"/>' +
@@ -339,20 +339,20 @@
       '    </linearGradient>' +
       '  </defs>' +
       '  <!-- Baseline axis -->' +
-      '  <line x1="' + padL + '" y1="26" x2="' + padR + '" y2="26" stroke="#1a2e1e" stroke-width="2.2"/>' +
+      '  <line x1="' + padL + '" y1="18" x2="' + padR + '" y2="18" stroke="#1a2e1e" stroke-width="2"/>' +
       '  <!-- Ticks -->' +
       ticksSvg +
       '  <!-- Workable range whisker line -->' +
-      '  <line x1="' + minX.toFixed(1) + '" y1="26" x2="' + maxX.toFixed(1) + '" y2="26" stroke="' + c.whisker + '" stroke-width="3" stroke-linecap="round"/>' +
+      '  <line x1="' + minX.toFixed(1) + '" y1="18" x2="' + maxX.toFixed(1) + '" y2="18" stroke="' + c.whisker + '" stroke-width="2.4" stroke-linecap="round"/>' +
       '  <!-- Min cap -->' +
-      '  <line x1="' + minX.toFixed(1) + '" y1="14" x2="' + minX.toFixed(1) + '" y2="38" stroke="' + c.whisker + '" stroke-width="3" stroke-linecap="round"/>' +
+      '  <line x1="' + minX.toFixed(1) + '" y1="11" x2="' + minX.toFixed(1) + '" y2="25" stroke="' + c.whisker + '" stroke-width="2.4" stroke-linecap="round"/>' +
       '  <!-- Max cap -->' +
-      '  <line x1="' + maxX.toFixed(1) + '" y1="14" x2="' + maxX.toFixed(1) + '" y2="38" stroke="' + c.whisker + '" stroke-width="3" stroke-linecap="round"/>' +
+      '  <line x1="' + maxX.toFixed(1) + '" y1="11" x2="' + maxX.toFixed(1) + '" y2="25" stroke="' + c.whisker + '" stroke-width="2.4" stroke-linecap="round"/>' +
       '  <!-- IQR box with gradient fill -->' +
-      '  <rect x="' + q1X.toFixed(1) + '" y="8" width="' + boxW.toFixed(1) + '" height="36" rx="5" fill="url(#' + gradId + ')" stroke="' + c.box + '" stroke-width="2.2"/>' +
+      '  <rect x="' + q1X.toFixed(1) + '" y="10" width="' + boxW.toFixed(1) + '" height="16" rx="3.5" fill="url(#' + gradId + ')" stroke="' + c.box + '" stroke-width="2"/>' +
       '  <!-- Median line -->' +
-      '  <line x1="' + medX.toFixed(1) + '" y1="8" x2="' + medX.toFixed(1) + '" y2="44" stroke="' + c.medianStroke + '" stroke-width="4" stroke-linecap="round"/>' +
-      '  <line x1="' + medX.toFixed(1) + '" y1="8" x2="' + medX.toFixed(1) + '" y2="44" stroke="' + c.median + '" stroke-width="2" stroke-linecap="round" opacity="0.85"/>' +
+      '  <line x1="' + medX.toFixed(1) + '" y1="10" x2="' + medX.toFixed(1) + '" y2="26" stroke="' + c.medianStroke + '" stroke-width="3.5" stroke-linecap="round"/>' +
+      '  <line x1="' + medX.toFixed(1) + '" y1="10" x2="' + medX.toFixed(1) + '" y2="26" stroke="' + c.median + '" stroke-width="1.8" stroke-linecap="round" opacity="0.85"/>' +
       '</svg>';
   }
 
