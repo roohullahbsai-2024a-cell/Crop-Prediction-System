@@ -314,14 +314,14 @@
     let ticksSvg = "";
     (req.ticks || []).forEach(function (t) {
       const tx = toX(t);
-      ticksSvg += '<line x1="' + tx.toFixed(1) + '" y1="18" x2="' + tx.toFixed(1) + '" y2="23" stroke="#16261c" stroke-width="1.2" opacity="0.6"/>';
-      ticksSvg += '<text x="' + tx.toFixed(1) + '" y="33" font-size="10.5" fill="#68776b" text-anchor="middle" font-family="var(--sans)">' + t + '</text>';
+      ticksSvg += '<line x1="' + tx.toFixed(1) + '" y1="15" x2="' + tx.toFixed(1) + '" y2="24" stroke="#1a2e1e" stroke-width="1.8"/>';
+      ticksSvg += '<text x="' + tx.toFixed(1) + '" y="35" font-size="12" fill="#1a2e1e" text-anchor="middle" font-family="var(--sans)" font-weight="700" letter-spacing="-0.2">' + t + '</text>';
     });
 
     return '' +
-      '<svg class="guide-chart-svg" viewBox="0 0 600 38" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Range chart">' +
+      '<svg class="guide-chart-svg" viewBox="0 0 600 42" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Range chart">' +
       '  <!-- Baseline axis -->' +
-      '  <line x1="' + padL + '" y1="18" x2="' + padR + '" y2="18" stroke="#16261c" stroke-width="1.5" opacity="0.65"/>' +
+      '  <line x1="' + padL + '" y1="18" x2="' + padR + '" y2="18" stroke="#1a2e1e" stroke-width="2.2"/>' +
       '  <!-- Ticks -->' +
       ticksSvg +
       '  <!-- Workable range whiskers -->' +
