@@ -461,7 +461,8 @@
     // Maximum importance in dataset is ~23.9%, so scale to 26% max height
     const maxScale = 26.0;
 
-    let colsHtml = "";
+    let barsHtml = "";
+    let axisHtml = "";
     FEATURES.forEach(function (f) {
       const meta   = FEATURE_INFO[f] || { short: f, name: f, unit: "" };
       const rfVal  = rfScores[f]  || 0;
@@ -472,41 +473,41 @@
       const xgHeightPct  = Math.min(100, (xgVal / maxScale) * 100);
       const svmHeightPct = Math.min(100, (svmVal / maxScale) * 100);
 
-      colsHtml += '' +
-        '<div class="fi-col">' +
-        '  <div class="fi-bars-group">' +
-        '    <!-- RF Bar (Purple) -->' +
-        '    <div class="fi-bar-item">' +
-        '      <span class="fi-bar-val rf-val">' + rfVal.toFixed(1) + '%</span>' +
-        '      <div class="fi-bar-track">' +
-        '        <div class="fi-bar bar-rf" data-h="' + rfHeightPct.toFixed(1) + '" style="height: 0%" title="RF (Random Forest): ' + rfVal.toFixed(2) + '%">' +
-        '          <span class="fi-bar-sublabel">RF</span>' +
-        '        </div>' +
-        '      </div>' +
-        '    </div>' +
-        '    <!-- XG Bar (Blue) -->' +
-        '    <div class="fi-bar-item">' +
-        '      <span class="fi-bar-val xg-val">' + xgVal.toFixed(1) + '%</span>' +
-        '      <div class="fi-bar-track">' +
-        '        <div class="fi-bar bar-xg" data-h="' + xgHeightPct.toFixed(1) + '" style="height: 0%" title="XG (XGBoost): ' + xgVal.toFixed(2) + '%">' +
-        '          <span class="fi-bar-sublabel">XG</span>' +
-        '        </div>' +
-        '      </div>' +
-        '    </div>' +
-        '    <!-- SVM Bar (Green) -->' +
-        '    <div class="fi-bar-item">' +
-        '      <span class="fi-bar-val svm-val">' + svmVal.toFixed(1) + '%</span>' +
-        '      <div class="fi-bar-track">' +
-        '        <div class="fi-bar bar-svm" data-h="' + svmHeightPct.toFixed(1) + '" style="height: 0%" title="SVM (Support Vector Machine): ' + svmVal.toFixed(2) + '%">' +
-        '          <span class="fi-bar-sublabel">SVM</span>' +
-        '        </div>' +
+      barsHtml += '' +
+        '<div class="fi-bars-group">' +
+        '  <!-- RF Bar (Purple) -->' +
+        '  <div class="fi-bar-item">' +
+        '    <span class="fi-bar-val rf-val">' + rfVal.toFixed(1) + '%</span>' +
+        '    <div class="fi-bar-track">' +
+        '      <div class="fi-bar bar-rf" data-h="' + rfHeightPct.toFixed(1) + '" style="height: 0%" title="RF (Random Forest): ' + rfVal.toFixed(2) + '%">' +
+        '        <span class="fi-bar-sublabel">RF</span>' +
         '      </div>' +
         '    </div>' +
         '  </div>' +
-        '  <div class="fi-axis-label">' +
-        '    <b class="fi-feat-code">' + esc(meta.short) + '</b>' +
-        '    <span class="fi-feat-name">' + esc(meta.name) + '</span>' +
+        '  <!-- XG Bar (Blue) -->' +
+        '  <div class="fi-bar-item">' +
+        '    <span class="fi-bar-val xg-val">' + xgVal.toFixed(1) + '%</span>' +
+        '    <div class="fi-bar-track">' +
+        '      <div class="fi-bar bar-xg" data-h="' + xgHeightPct.toFixed(1) + '" style="height: 0%" title="XG (XGBoost): ' + xgVal.toFixed(2) + '%">' +
+        '        <span class="fi-bar-sublabel">XG</span>' +
+        '      </div>' +
+        '    </div>' +
         '  </div>' +
+        '  <!-- SVM Bar (Green) -->' +
+        '  <div class="fi-bar-item">' +
+        '    <span class="fi-bar-val svm-val">' + svmVal.toFixed(1) + '%</span>' +
+        '    <div class="fi-bar-track">' +
+        '      <div class="fi-bar bar-svm" data-h="' + svmHeightPct.toFixed(1) + '" style="height: 0%" title="SVM (Support Vector Machine): ' + svmVal.toFixed(2) + '%">' +
+        '        <span class="fi-bar-sublabel">SVM</span>' +
+        '      </div>' +
+        '    </div>' +
+        '  </div>' +
+        '</div>';
+
+      axisHtml += '' +
+        '<div class="fi-axis-item">' +
+        '  <b class="fi-feat-code">' + esc(meta.short) + '</b>' +
+        '  <span class="fi-feat-name">' + esc(meta.name) + '</span>' +
         '</div>';
     });
 
@@ -542,16 +543,21 @@
       '    </div>' +
       '  </div>' +
       '  <div class="fi-chart-wrapper">' +
-      '    <div class="fi-grid-lines" aria-hidden="true">' +
-      '      <div class="fi-grid-line"><span class="grid-num">25%</span></div>' +
-      '      <div class="fi-grid-line"><span class="grid-num">20%</span></div>' +
-      '      <div class="fi-grid-line"><span class="grid-num">15%</span></div>' +
-      '      <div class="fi-grid-line"><span class="grid-num">10%</span></div>' +
-      '      <div class="fi-grid-line"><span class="grid-num">5%</span></div>' +
-      '      <div class="fi-grid-line fi-baseline"><span class="grid-num">0%</span></div>' +
+      '    <div class="fi-plot-area">' +
+      '      <div class="fi-grid-lines" aria-hidden="true">' +
+      '        <div class="fi-grid-line"><span class="grid-num">25%</span></div>' +
+      '        <div class="fi-grid-line"><span class="grid-num">20%</span></div>' +
+      '        <div class="fi-grid-line"><span class="grid-num">15%</span></div>' +
+      '        <div class="fi-grid-line"><span class="grid-num">10%</span></div>' +
+      '        <div class="fi-grid-line"><span class="grid-num">5%</span></div>' +
+      '        <div class="fi-grid-line fi-baseline"><span class="grid-num">0%</span></div>' +
+      '      </div>' +
+      '      <div class="fi-bars-row">' +
+      barsHtml +
+      '      </div>' +
       '    </div>' +
-      '    <div class="fi-columns-container">' +
-      colsHtml +
+      '    <div class="fi-axis-row">' +
+      axisHtml +
       '    </div>' +
       '  </div>' +
       '  <div class="fi-insight-banner">' +

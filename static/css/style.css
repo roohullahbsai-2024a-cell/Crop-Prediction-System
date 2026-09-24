@@ -1714,13 +1714,18 @@ input[type="number"]:focus {
 /* Chart coordinate area */
 .fi-chart-wrapper {
   position: relative;
-  height: 220px;
-  padding-bottom: 40px;
+  width: 100%;
+}
+
+.fi-plot-area {
+  position: relative;
+  height: 195px;
+  width: 100%;
 }
 
 .fi-grid-lines {
   position: absolute;
-  inset: 0 0 40px 0;
+  inset: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1741,40 +1746,33 @@ input[type="number"]:focus {
 .grid-num {
   position: absolute;
   right: 0;
-  top: -9px;
+  top: -8px;
   font-size: 0.68rem;
   font-weight: 650;
   color: #8da194;
   font-variant-numeric: tabular-nums;
   background: #ffffff;
-  padding-left: 4px;
+  padding: 0 4px;
+  z-index: 2;
 }
 
-.fi-columns-container {
+.fi-bars-row {
   position: relative;
   height: 100%;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 6px;
+  padding-right: 36px;
   z-index: 1;
-}
-
-.fi-col {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 100%;
 }
 
 .fi-bars-group {
   position: relative;
-  flex-grow: 1;
-  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: flex-end;
   gap: 3.5px;
-  padding-bottom: 2px;
 }
 
 .fi-bar-item {
@@ -1783,15 +1781,19 @@ input[type="number"]:focus {
   align-items: center;
   justify-content: flex-end;
   height: 100%;
-  width: 17px;
+  flex: 1;
+  max-width: 22px;
 }
 
 .fi-bar-val {
-  font-size: 0.64rem;
+  font-size: 0.58rem;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
   white-space: nowrap;
+  letter-spacing: -0.02em;
+  text-align: center;
+  line-height: 1;
 }
 
 .rf-val  { color: #6d28d9; }
@@ -1800,9 +1802,9 @@ input[type="number"]:focus {
 
 .fi-bar-track {
   width: 100%;
-  height: 145px;
+  height: calc(100% - 20px);
   background: rgba(22, 38, 28, 0.04);
-  border-radius: 5px 5px 2px 2px;
+  border-radius: 5px 5px 0 0;
   display: flex;
   align-items: flex-end;
   overflow: hidden;
@@ -1810,7 +1812,7 @@ input[type="number"]:focus {
 
 .fi-bar {
   width: 100%;
-  border-radius: 4px 4px 2px 2px;
+  border-radius: 4px 4px 0 0;
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -1832,33 +1834,40 @@ input[type="number"]:focus {
 }
 
 .fi-bar-sublabel {
-  font-size: 0.62rem;
+  font-size: 0.60rem;
   font-weight: 850;
   color: #ffffff;
   letter-spacing: 0.02em;
   opacity: 0.95;
 }
 
-.fi-axis-label {
-  height: 38px;
+.fi-axis-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  padding-right: 36px;
+  margin-top: 10px;
+}
+
+.fi-axis-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   text-align: center;
-  margin-top: 4px;
 }
 
 .fi-feat-code {
-  font-size: 0.86rem;
+  font-size: 0.88rem;
   font-weight: 800;
-  color: var(--text-dark);
+  color: var(--text-dark, #16261c);
+  line-height: 1.2;
 }
 
 .fi-feat-name {
   font-size: 0.68rem;
-  color: var(--text-muted);
+  color: var(--text-muted, #64748b);
   white-space: nowrap;
+  margin-top: 2px;
 }
 
 .fi-insight-banner {
@@ -2201,9 +2210,9 @@ footer {
 
   /* Feature importance responsive */
   .fi-card { padding: 16px 14px; }
-  .fi-chart-wrapper { overflow-x: auto; padding-bottom: 30px; }
-  .fi-columns-container,
-  .fi-grid-lines { min-width: 530px; }
+  .fi-chart-wrapper { overflow-x: auto; padding-bottom: 8px; }
+  .fi-plot-area,
+  .fi-axis-row { min-width: 530px; }
   .fi-head { flex-direction: column; gap: 12px; }
 
   /* Best crop card responsive */
