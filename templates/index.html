@@ -34,22 +34,18 @@
   <!-- ══════════════════════ BRAND BAR ══════════════════════ -->
   <div class="top-nav-bar">
     <span class="brand-title">Crop Recommendation System</span>
-    <div class="brand-tagline">
-      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 21v-9"></path>
-        <path d="M12 12C12 8 9 5 5 5c0 4 3 7 7 7z"></path>
-        <path d="M12 14c0-3.3 2.7-6 6-6 0 3.3-2.7 6-6 6z"></path>
-      </svg>
-      <span>Smarter Fields, Better Yields</span>
-    </div>
   </div>
 
   <!-- ══════════════════════ MASTHEAD ══════════════════════ -->
   <header class="masthead">
     <div class="masthead-inner">
+
+      <!-- Left: centered heading inside its own box -->
       <div class="masthead-text">
         <div class="eyebrow">FIELD INTELLIGENCE</div>
-        <h1>Which <span class="highlight-green">Crop</span> Should I Select?</h1>
+        <div class="heading-box">
+          <h1>Which <span class="highlight-green">Crop</span> Should I Select?</h1>
+        </div>
         <p>
           Enter your field details such as soil nutrients, weather, and pH level.
           Our AI model will analyze the data and suggest the best crop for your field,
@@ -57,40 +53,32 @@
         </p>
       </div>
 
-      <!-- AI Intelligence Box -->
+      <!-- Right: detailed description box -->
       <div class="ai-intel-box">
         <div class="ai-intel-header">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2a10 10 0 1 0 10 10"/>
+            <circle cx="12" cy="12" r="10"/>
             <path d="M12 8v4l3 3"/>
-            <circle cx="19" cy="5" r="3"/>
           </svg>
-          <span>AI-Powered Intelligence</span>
+          <span>About This System</span>
         </div>
+        <p class="ai-intel-desc">
+          The <strong>Crop Recommendation System</strong> is an AI-powered agricultural
+          decision tool that uses machine learning to analyze your soil and climate data.
+          It combines three powerful models — <strong>XGBoost</strong>,
+          <strong>Random Forest</strong>, and <strong>SVM</strong> — into a single
+          ensemble to deliver the most accurate crop suggestion for your field.
+        </p>
         <ul class="ai-intel-list">
-          <li>
-            <span class="ai-dot"></span>
-            <span>3-Model Ensemble Learning</span>
-          </li>
-          <li>
-            <span class="ai-dot"></span>
-            <span>Real-Time Field Analysis</span>
-          </li>
-          <li>
-            <span class="ai-dot"></span>
-            <span>98%+ Prediction Accuracy</span>
-          </li>
-          <li>
-            <span class="ai-dot"></span>
-            <span>Smart Nutrient Optimization</span>
-          </li>
-          <li>
-            <span class="ai-dot"></span>
-            <span>Precision Agriculture Ready</span>
-          </li>
+          <li><span class="ai-dot"></span><span>3-Model Ensemble for Higher Accuracy</span></li>
+          <li><span class="ai-dot"></span><span>Analyzes N, P, K, pH, Humidity &amp; Rainfall</span></li>
+          <li><span class="ai-dot"></span><span>Real-Time Confidence Score per Crop</span></li>
+          <li><span class="ai-dot"></span><span>Smart Nutrient &amp; Climate Matching</span></li>
+          <li><span class="ai-dot"></span><span>Precision Agriculture — Data Driven</span></li>
         </ul>
         <div class="ai-intel-footer">Powered by XGBoost · Random Forest · SVM</div>
       </div>
+
     </div>
   </header>
 
