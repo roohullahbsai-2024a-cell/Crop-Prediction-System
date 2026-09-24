@@ -1002,7 +1002,6 @@
         '<article class="model-card ' + (matches ? "match-top" : "") + '">' +
         '  <div class="model-card-top">' +
         '    <span class="model-card-name">' + esc(m.name) + '</span>' +
-        '    <span class="model-acc-badge ' + theme.badge + '">' + m.accuracy.toFixed(2) + '%</span>' +
         '  </div>' +
         '  <div class="model-pred-val ' + theme.color + '">' + esc(m.prediction) + '</div>' +
         '  <p class="model-desc">' + esc(theme.note) + '</p>' +
