@@ -231,11 +231,9 @@
     const switcherHtml = '' +
       '<div class="results-switcher">' +
       '  <button type="button" class="results-tab-btn ' + (activeView === "guide" ? "active" : "") + '" id="tab-guide">' +
-      '    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>' +
       '    <span>Static Crop Guide (' + cropName + ')</span>' +
       '  </button>' +
       '  <button type="button" class="results-tab-btn ' + (activeView === "prediction" ? "active" : "") + '" id="tab-pred">' +
-      '    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="4" width="16" height="16" rx="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>' +
       '    <span>Model Recommendations</span>' +
       '  </button>' +
       '</div>';

@@ -317,16 +317,11 @@ body {
   margin-bottom: 10px;
 }
 
-.card-icon-circle {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: var(--forest);
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+.card-icon-circle,
+.title-bullet-icon,
+.alert-icon-circle,
+.consensus-icon-circle {
+  display: none !important;
 }
 
 .card h2 {
