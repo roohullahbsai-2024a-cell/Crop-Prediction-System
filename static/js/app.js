@@ -972,16 +972,21 @@
     });
     html += "</div>";
 
-    /* --- per-model answers --- */
-    html += '<div class="section-title reveal" style="--d:400ms">' +
-            '  <div class="title-left">' +
-            '    <span class="title-bullet-icon teal">' +
-            '      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.3"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>' +
-            '    </span>' +
-            '    <span>Which each model said on its own</span>' +
-            '  </div>' +
-            '  <small>Test accuracy shown beside the name</small>' +
-            '</div>';
+    /* --- per-model answers (collapsible dropdown) --- */
+    html += '<div class="model-accordion-wrap reveal" style="--d:400ms">' +
+            '  <button type="button" class="model-accordion-btn" id="modelAccordionBtn" onclick="toggleModelPredictions()" aria-expanded="false">' +
+            '    <div class="model-accordion-btn-left">' +
+            '      <span class="model-accordion-title">Which each model said on its own</span>' +
+            '      <small class="model-accordion-subtitle">Test accuracy shown beside the name</small>' +
+            '    </div>' +
+            '    <div class="model-accordion-btn-right">' +
+            '      <span class="model-accordion-tag" id="modelToggleTag">View Details</span>' +
+            '      <svg class="model-accordion-chevron" id="modelAccordionChevron" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
+            '        <polyline points="6 9 12 15 18 9"/>' +
+            '      </svg>' +
+            '    </div>' +
+            '  </button>' +
+            '  <div class="model-accordion-content" id="modelAccordionContent">';
 
     const modelThemes = {
       xgb: { badge: "badge-blue", color: "blue-pred", fillClass: "fill-blue", note: "Gradient-boosted trees. Highest test set accuracy." },
@@ -994,7 +999,7 @@
       const theme = modelThemes[m.key] || { badge: "badge-blue", color: "blue-pred", fillClass: "fill-blue", note: m.note };
       const matches = m.prediction === top.crop;
       html += '' +
-        '<article class="model-card reveal ' + (matches ? "match-top" : "") + '" style="--d:' + (450 + i * 70) + 'ms">' +
+        '<article class="model-card ' + (matches ? "match-top" : "") + '">' +
         '  <div class="model-card-top">' +
         '    <span class="model-card-name">' + esc(m.name) + '</span>' +
         '    <span class="model-acc-badge ' + theme.badge + '">' + m.accuracy.toFixed(2) + '%</span>' +
@@ -1008,7 +1013,9 @@
         '  </div>' +
         '</article>';
     });
-    html += "</div>";
+    html += '</div>'; // close .model-cards-grid
+    html += '</div>'; // close .model-accordion-content
+    html += '</div>'; // close .model-accordion-wrap
 
     /* --- WHY THIS CROP IS BEST (EXPLANATION WORDS) --- */
     html += renderBestCropReason(data);
@@ -1020,6 +1027,27 @@
 
     return html;
   }
+
+  /* ------------------------------- Toggle Per-Model Predictions Dropdown */
+  window.toggleModelPredictions = function () {
+    const content = document.getElementById("modelAccordionContent");
+    const chevron = document.getElementById("modelAccordionChevron");
+    const tag     = document.getElementById("modelToggleTag");
+    const btn     = document.getElementById("modelAccordionBtn");
+    if (!content) return;
+    const isOpen = content.classList.toggle("open");
+    if (chevron) chevron.classList.toggle("open", isOpen);
+    if (btn) btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    if (tag) tag.textContent = isOpen ? "Hide Details" : "View Details";
+
+    if (isOpen) {
+      const fills = content.querySelectorAll(".conf-fill");
+      fills.forEach(function (f) {
+        const target = parseFloat(f.getAttribute("data-w")) || 0;
+        f.style.width = target + "%";
+      });
+    }
+  };
 
   /* ------------------------------------------------------- Animation pass */
 

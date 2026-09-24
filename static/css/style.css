@@ -939,6 +939,91 @@ input[type="number"]:focus {
   margin-top: 4px;
 }
 
+/* ------------------------------------------------- Model predictions accordion */
+.model-accordion-wrap {
+  margin-bottom: 18px;
+  border: 1.5px solid #d4e8db;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 2px 10px rgba(18,50,30,0.04);
+}
+
+.model-accordion-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  background: #f6fdf8;
+  border: none;
+  cursor: pointer;
+  font-family: var(--sans);
+  transition: background 0.15s ease;
+}
+
+.model-accordion-btn:hover {
+  background: #edfaf2;
+}
+
+.model-accordion-btn-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.model-accordion-title {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  letter-spacing: -0.01em;
+}
+
+.model-accordion-subtitle {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.model-accordion-btn-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.model-accordion-tag {
+  font-size: 0.75rem;
+  font-weight: 750;
+  color: var(--forest);
+  background: #d1fae5;
+  border: 1px solid #86efac;
+  padding: 3px 10px;
+  border-radius: 99px;
+  letter-spacing: 0.02em;
+}
+
+.model-accordion-chevron {
+  transition: transform 0.25s ease;
+  color: var(--forest);
+}
+.model-accordion-chevron.open {
+  transform: rotate(180deg);
+}
+
+.model-accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.3s ease;
+  padding: 0 16px;
+}
+.model-accordion-content.open {
+  max-height: 1000px;
+  padding: 14px 16px 16px;
+}
+
 /* ------------------------------------------------- per model 3-column cards */
 .model-cards-grid {
   display: grid;
