@@ -1,0 +1,8 @@
+.git
+.venv
+*.ipynb
+*.docx
+*.jpg
+*.png
+desktop-tutorial/
+generate_report.py

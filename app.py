@@ -252,6 +252,20 @@ def load_crop_profiles():
 
     CROP_PROFILES = profiles
 
+
+def init_app():
+    """Ensure artifacts and profiles are loaded once for serving in both WSGI/Serverless and CLI."""
+    global MODELS, SCALER, LABEL_ENCODER, CLASSES, CROP_PROFILES
+    if not MODELS or SCALER is None or LABEL_ENCODER is None:
+        load_artifacts()
+    if not CROP_PROFILES:
+        load_crop_profiles()
+
+
+# Auto-initialize on import so Serverless (e.g. Vercel) and WSGI runners have models ready
+init_app()
+
+
 def self_test(max_attempts=3):
     """
     Review loop: push known samples through the whole pipeline and check the
@@ -498,6 +512,13 @@ def _consensus_text(agree, total, crop):
 # ─────────────────────────────────────────────────────────────────────────────
 # Routes
 # ─────────────────────────────────────────────────────────────────────────────
+@app.before_request
+def ensure_initialized():
+    """Ensure models and profiles are loaded before processing any request."""
+    if not MODELS or not CROP_PROFILES:
+        init_app()
+
+
 @app.route("/")
 def home():
     crop_list = [
